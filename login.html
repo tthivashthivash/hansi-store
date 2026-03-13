@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Part 1 - Login</title>
+<style>
+  body {
+    font-family: sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    background: linear-gradient(135deg, #e0f7fa, #80deea);
+  }
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    width: 300px;
+    background: white;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(0,0,0,0.2);
+  }
+  input, button {
+    padding: 10px;
+    font-size: 16px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+  }
+  input:focus {
+    outline: 3px solid #0288d1;
+  }
+  button {
+    background: linear-gradient(135deg, #0288d1, #26c6da);
+    color: white;
+    border: none;
+    cursor: pointer;
+  }
+  button:focus {
+    outline: 3px solid #01579b;
+  }
+</style>
+</head>
+<body>
+
+<main>
+  <h1 id="login-title">Login</h1>
+  <form id="login-form" aria-labelledby="login-title">
+    <label for="username">Username</label>
+    <input type="text" id="username" name="username" aria-required="true" required>
+
+    <label for="password">Password</label>
+    <input type="password" id="password" name="password" aria-required="true" required>
+
+    <button type="submit" aria-label="Login and go to Part 2">Login</button>
+  </form>
+</main>
+
+<script>
+  const form = document.getElementById('login-form');
+  form.addEventListener('submit', function(e) {
+    e.preventDefault();
+    // Redirect to Part 2
+    window.location.href = 'part2.html';
+  });
+</script>
+
+</body>
+</html>
