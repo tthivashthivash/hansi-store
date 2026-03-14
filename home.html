@@ -5,9 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>MiniMeesho Home</title>
 <style>
-/* Basic reset and styling */
-body { font-family: sans-serif; margin:0; padding:0; background:#f2f2f2; }
-header { display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; padding:10px; background:linear-gradient(135deg, violet, skyblue); color:white; }
+/* ===== Embedded CSS ===== */
+body { font-family:sans-serif; margin:0; padding:0; background:#f2f2f2; }
+header { display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; padding:10px; background:linear-gradient(135deg,violet,skyblue); color:white; }
 header input { padding:5px; width:200px; border-radius:5px; border:none; }
 header button { padding:6px 10px; border:none; border-radius:5px; cursor:pointer; background:purple; color:white; }
 nav a { margin:0 10px; text-decoration:none; color:white; font-weight:bold; cursor:pointer; }
@@ -32,53 +32,46 @@ section { margin-top:30px; width:100%; max-width:800px; margin-left:auto; margin
     <button onclick="searchProduct()">Search</button>
   </div>
   <nav>
-    <a onclick="goToPage('profile')">Profile</a>
-    <a onclick="goToPage('myorders')">My Orders</a>
-    <a onclick="goToPage('wishlist')">Wishlist</a>
-    <a onclick="goToPage('home')">Home</a>
+    <a href="profile.html">Profile</a>
+    <a href="myorders.html">My Orders</a>
+    <a href="wishlist.html">Wishlist</a>
+    <a href="home.html">Home</a>
   </nav>
 </header>
 
 <main>
   <h2 style="width:100%; text-align:center;">Products</h2>
-  <div class="product-card" onclick="goToPage('product')">
+  <div class="product-card" onclick="window.location.href='product.html'">
     <img src="https://via.placeholder.com/150" alt="Shirt">
     <p>Awesome Shirt</p>
-    <button class="buy-btn" onclick="goToPage('product')">Buy Now</button>
+    <button class="buy-btn" onclick="window.location.href='product.html'">Buy Now</button>
   </div>
-  <div class="product-card" onclick="goToPage('product')">
+  <div class="product-card" onclick="window.location.href='product.html'">
     <img src="https://via.placeholder.com/150" alt="Bag">
     <p>Stylish Bag</p>
-    <button class="buy-btn" onclick="goToPage('product')">Buy Now</button>
+    <button class="buy-btn" onclick="window.location.href='product.html'">Buy Now</button>
   </div>
-  <div class="product-card" onclick="goToPage('product')">
+  <div class="product-card" onclick="window.location.href='product.html'">
     <img src="https://via.placeholder.com/150" alt="Shoes">
     <p>Cool Shoes</p>
-    <button class="buy-btn" onclick="goToPage('product')">Buy Now</button>
+    <button class="buy-btn" onclick="window.location.href='product.html'">Buy Now</button>
   </div>
 </main>
 
 <section>
   <h3 class="section-title">Quick Access</h3>
   <div class="card-list">
-    <div onclick="goToPage('profile')">Your Profile</div>
-    <div onclick="goToPage('myorders')">Orders</div>
-    <div onclick="goToPage('wishlist')">Wishlist</div>
+    <div onclick="window.location.href='profile.html'">Your Profile</div>
+    <div onclick="window.location.href='myorders.html'">Orders</div>
+    <div onclick="window.location.href='wishlist.html'">Wishlist</div>
   </div>
 </section>
 
 <script>
-// Page redirects simulation
-function goToPage(page) {
-  alert("Redirecting to " + page + " page...");
-  // Normally: window.location.href = page + ".html";
-}
-
-// Search simulation
 function searchProduct() {
   const query = document.getElementById('searchBox').value.toLowerCase();
   if(query.includes("shirt") || query.includes("bag") || query.includes("shoes")) {
-    goToPage('product');
+    window.location.href = "product.html";
   } else {
     alert("Product not found!");
   }
