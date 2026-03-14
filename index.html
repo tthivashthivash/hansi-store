@@ -3,35 +3,76 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Login / Signup - Mini Meesho</title>
-<link rel="stylesheet" href="styles.css">
+<title>Mini Meesho Login</title>
+<style>
+body{
+  margin:0;
+  font-family: 'Arial', sans-serif;
+  background: linear-gradient(135deg, #a18cd1, #fbc2eb);
+  height: 100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+}
+.container{
+  background:white;
+  padding:40px;
+  border-radius:20px;
+  box-shadow:0 10px 25px rgba(0,0,0,0.2);
+  width:90%;
+  max-width:400px;
+}
+h2{text-align:center; color:violet; margin-bottom:20px;}
+form{display:flex; flex-direction:column; gap:15px;}
+input{
+  padding:12px 15px;
+  border-radius:25px;
+  border:2px solid #ddd;
+  outline:none;
+  font-size:16px;
+  transition:0.3s;
+}
+input:focus{border-color:violet; transform:scale(1.02);}
+button{
+  padding:12px;
+  border:none;
+  border-radius:25px;
+  background: linear-gradient(135deg,violet,skyblue);
+  color:white;
+  font-weight:bold;
+  cursor:pointer;
+  transition:0.3s;
+}
+button:hover{transform:scale(1.05);}
+.toggle-text{
+  text-align:center;
+  margin-top:10px;
+  font-size:0.9rem;
+}
+.toggle-text span{
+  color:violet;
+  cursor:pointer;
+  font-weight:bold;
+}
+</style>
 </head>
 <body>
-
-<div class="login-container">
+<div class="container">
 <h2 id="form-title">Login</h2>
-<span class="toggle-link" id="toggle-form">Don't have an account? Signup</span>
-
 <form id="auth-form">
-  <div class="input-group">
-    <input type="text" id="username" placeholder=" " required>
-    <label for="username">Username</label>
-  </div>
-  <div class="input-group" id="email-group" style="display:none;">
-    <input type="email" id="email" placeholder=" ">
-    <label for="email">Email</label>
-  </div>
-  <div class="input-group">
-    <input type="password" id="password" placeholder=" " required>
-    <label for="password">Password</label>
-  </div>
-  <button type="submit" id="submit-btn">Login</button>
+<input type="text" id="name" placeholder="Name" style="display:none;">
+<input type="email" id="email" placeholder="Email" required>
+<input type="password" id="password" placeholder="Password" required>
+<button type="submit" id="submit-btn">Login</button>
 </form>
+<div class="toggle-text">
+<span id="toggle-form">Don't have an account? Signup</span>
+</div>
 </div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { getFirestore, collection, addDoc, getDocs, query, where } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "YOUR_API_KEY",
@@ -45,48 +86,58 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-const toggleLink = document.getElementById('toggle-form');
-const formTitle = document.getElementById('form-title');
-const emailGroup = document.getElementById('email-group');
-const submitBtn = document.getElementById('submit-btn');
+let isLogin = true;
 
-toggleLink.addEventListener('click', ()=>{
-  if(emailGroup.style.display==='none'){
-    emailGroup.style.display='block';
-    formTitle.innerText='Signup';
-    submitBtn.innerText='Signup';
-    toggleLink.innerText='Already have an account? Login';
-  }else{
-    emailGroup.style.display='none';
-    formTitle.innerText='Login';
-    submitBtn.innerText='Login';
-    toggleLink.innerText="Don't have an account? Signup";
+const form = document.getElementById("auth-form");
+const toggle = document.getElementById("toggle-form");
+const title = document.getElementById("form-title");
+const nameInput = document.getElementById("name");
+const emailInput = document.getElementById("email");
+const passwordInput = document.getElementById("password");
+const submitBtn = document.getElementById("submit-btn");
+
+toggle.addEventListener("click", ()=>{
+  isLogin = !isLogin;
+  if(isLogin){
+    nameInput.style.display = "none";
+    title.textContent = "Login";
+    submitBtn.textContent = "Login";
+    toggle.textContent = "Don't have an account? Signup";
+  } else {
+    nameInput.style.display = "block";
+    title.textContent = "Signup";
+    submitBtn.textContent = "Signup";
+    toggle.textContent = "Already have an account? Login";
   }
 });
 
-document.getElementById('auth-form').addEventListener('submit', async (e)=>{
+form.addEventListener("submit", async (e)=>{
   e.preventDefault();
-  const username = document.getElementById('username').value;
-  const password = document.getElementById('password').value;
+  const email = emailInput.value.trim();
+  const password = passwordInput.value.trim();
+  const name = nameInput.value.trim();
 
-  if(emailGroup.style.display==='block'){
-    const email = document.getElementById('email').value;
-    await addDoc(collection(db,"users"),{username,email,password});
-    alert('Signup Successful! You can now login.');
-    toggleLink.click();
-  }else{
-    const usersSnapshot = await getDocs(collection(db,"users"));
-    const users = [];
-    usersSnapshot.forEach(doc=>users.push(doc.data()));
-    const user = users.find(u=>u.username===username && u.password===password);
-    if(user){
-      localStorage.setItem('loggedIn','true');
-      localStorage.setItem('currentUser',JSON.stringify(user));
-      alert('Login Successful!');
-      window.location.href='home.html';
-    }else{
-      alert('Invalid Credentials!');
+  if(isLogin){
+    // LOGIN
+    const q = query(collection(db,"users"), where("email","==",email), where("password","==",password));
+    const snap = await getDocs(q);
+    if(snap.empty){
+      alert("Invalid credentials!");
+    } else {
+      let userData;
+      snap.forEach(doc=>userData = doc.data());
+      localStorage.setItem("loggedIn", true);
+      localStorage.setItem("currentUser", JSON.stringify(userData));
+      window.location.href="home.html";
     }
+  } else {
+    // SIGNUP
+    if(!name){alert("Please enter name"); return;}
+    const newUser = {name,email,password};
+    await addDoc(collection(db,"users"), newUser);
+    localStorage.setItem("loggedIn", true);
+    localStorage.setItem("currentUser", JSON.stringify(newUser));
+    window.location.href="home.html";
   }
 });
 </script>
