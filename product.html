@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Product Details - Mini Meesho</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header>
+<h1>Product Details</h1>
+<button id="back-btn">Back</button>
+</header>
+
+<main id="product-detail" style="padding:20px;">
+<!-- Product info will appear here -->
+</main>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_PROJECT.firebaseapp.com",
+  projectId: "YOUR_PROJECT_ID",
+  storageBucket: "YOUR_PROJECT.appspot.com",
+  messagingSenderId: "XXXX",
+  appId: "XXXX"
+};
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+if(!localStorage.getItem('loggedIn')){
+  window.location.href='login.html';
+}
+
+const user = JSON.parse(localStorage.getItem('currentUser'));
+const product = JSON.parse(localStorage.getItem('selectedProduct'));
+const container = document.getElementById('product-detail');
+
+container.innerHTML=`
+  <img src="${product.img}" alt="${product.name}" style="width:100%;max-width:400px;margin-bottom:20px;">
+  <h2>${product.name}</h2>
+  <p>${product.details}</p>
+  <p style="font-weight:bold;color:#ff4500;">Price: ${product.price}</p>
+  <button id="add-cart">Add to Cart</button>
+  <button id="buy-now">Buy Now</button>
+`;
+
+document.getElementById('back-btn').addEventListener('click', ()=>{
+  window.location.href='home.html';
+});
+
+// Add to Cart (localStorage)
+document.getElementById('add-cart').addEventListener('click', ()=>{
+  let cart = JSON.parse(localStorage.getItem('cart')) || [];
+  cart.push(product);
+  localStorage.setItem('cart', JSON.stringify(cart));
+  alert('Added to Cart!');
+});
+
+// Buy Now → save order to Firebase
+document.getElementById('buy-now').addEventListener('click', async ()=>{
+  await addDoc(collection(db,"orders"),{
+    userEmail: user.email,
+    product: product,
+    timestamp: new Date()
+  });
+  alert('Order Placed!');
+  window.location.href='orders.html';
+});
+</script>
+</body>
+</html>

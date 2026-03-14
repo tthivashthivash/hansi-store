@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mini Meesho Home</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header>
+<h1>Mini Meesho</h1>
+<button id="logout-btn">Logout</button>
+</header>
+
+<div class="search-bar">
+<input type="text" id="search-input" placeholder="Search products...">
+</div>
+
+<div class="categories">
+  <div onclick="location.href='clothing.html'">Clothing</div>
+  <div onclick="location.href='accessories.html'">Accessories</div>
+  <div onclick="location.href='trending.html'">Trending</div>
+  <div onclick="location.href='newarrivals.html'">New Arrivals</div>
+  <div onclick="location.href='toppicks.html'">Top Picks</div>
+</div>
+
+<main id="product-list"></main>
+
+<!-- Bottom Nav -->
+<div id="bottom-nav">
+  <div class="nav-item"><img src="icons/orders.png"><span>My Orders</span></div>
+  <div class="nav-item"><img src="icons/profile.png"><span>Profile</span></div>
+  <div class="nav-item"><img src="icons/wishlist.png"><span>Wishlist</span></div>
+  <div class="nav-item"><img src="icons/home.png"><span>Home</span></div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_PROJECT.firebaseapp.com",
+  projectId: "YOUR_PROJECT_ID",
+  storageBucket: "YOUR_PROJECT.appspot.com",
+  messagingSenderId: "XXXX",
+  appId: "XXXX"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+if(!localStorage.getItem('loggedIn')){
+  alert('Please login first!');
+  window.location.href='login.html';
+}
+
+const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+
+let products = [
+  {name:"Product 1", price:"₹500", details:"Awesome Product 1", img:"images/product1.jpg"},
+  {name:"Product 2", price:"₹800", details:"Awesome Product 2", img:"images/product2.jpg"},
+  {name:"Product 3", price:"₹1200", details:"Awesome Product 3", img:"images/product3.jpg"}
+];
+
+function renderProducts(list=products){
+  const container = document.getElementById('product-list');
+  container.innerHTML='';
+  list.forEach(prod=>{
+    const card = document.createElement('div');
+    card.className='product-card';
+    card.innerHTML=`<img src="${prod.img}" alt="${prod.name}">
+      <div class="product-info">
+      <h3>${prod.name}</h3>
+      <p class="price">${prod.price}</p>
+      <p>${prod.details}</p>
+      <button>Add to Cart</button>
+      </div>`;
+    card.querySelector('button').addEventListener('click', async ()=>{
+      await addDoc(collection(db,'orders'),{
+        userEmail: currentUser.email,
+        product: prod,
+        timestamp: new Date()
+      });
+      alert('Order placed!');
+    });
+    container.appendChild(card);
+  });
+}
+
+renderProducts();
+
+document.getElementById('search-input').addEventListener('input',(e)=>{
+  const val = e.target.value.toLowerCase();
+  renderProducts(products.filter(p=>p.name.toLowerCase().includes(val)||p.details.toLowerCase().includes(val)));
+});
+
+document.getElementById('logout-btn').addEventListener('click',()=>{
+  localStorage.removeItem('loggedIn');
+  localStorage.removeItem('currentUser');
+  window.location.href='login.html';
+});
+
+// Bottom nav redirect
+document.querySelectorAll('#bottom-nav .nav-item').forEach(item=>{
+  item.addEventListener('click',()=>{
+    const link = item.querySelector('span').innerText.toLowerCase().replace(/\s/g,'')+'.html';
+    window.location.href=link;
+  });
+});
+</script>
+</body>
+</html>
