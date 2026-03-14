@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MiniMeesho Checkout</title>
+<style>
+body{margin:0;font-family:Arial,sans-serif;background:#f5f5f5;}
+header.navbar{display:flex;justify-content:space-between;align-items:center;padding:15px 30px;background:linear-gradient(135deg,violet,skyblue);color:white;}
+header .logo{font-size:24px;font-weight:bold;cursor:pointer;}
+header .nav-icons span{margin-left:20px;cursor:pointer;}
+header .search-bar{padding:5px 10px;border-radius:5px;border:none;}
+footer{background:#f1f1f1;text-align:center;padding:20px;}
+footer span{cursor:pointer;color:blue;text-decoration:underline;margin:0 5px;}
+footer span:hover, header .nav-icons span:hover{opacity:0.8;}
+
+/* ====== Checkout Styles ====== */
+main{padding:20px;max-width:600px;margin:auto;background:white;border-radius:10px;margin-top:20px;box-shadow:0 4px 10px rgba(0,0,0,0.2);}
+h2{text-align:center;}
+.cart-summary{margin-top:20px;}
+.cart-summary p{font-size:16px;margin:5px 0;}
+button{padding:10px 15px;border:none;border-radius:5px;background:green;color:white;font-size:16px;cursor:pointer;width:100%;margin-top:15px;transition:0.3s;}
+button:hover{opacity:0.8;}
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<header class="navbar">
+    <div class="logo" onclick="redirect('index.html')">MiniMeesho</div>
+    <input type="text" placeholder="Search products..." class="search-bar">
+    <div class="nav-icons">
+        <span onclick="redirect('wishlist.html')">❤️ Wishlist</span>
+        <span onclick="redirect('cart.html')">🛒 Cart</span>
+        <span onclick="redirect('profile.html')">👤 Profile</span>
+    </div>
+</header>
+
+<!-- Main Content -->
+<main>
+    <h2>Checkout</h2>
+    <div class="cart-summary" id="cartSummary">
+        <!-- Cart summary will be displayed here -->
+    </div>
+    <button onclick="placeOrder()">Place Order</button>
+</main>
+
+<!-- Footer -->
+<footer>
+    <p>MiniMeesho © 2026 | 
+        <span onclick="redirect('about.html')">About</span> | 
+        <span onclick="redirect('contact.html')">Contact</span> | 
+        <span onclick="redirect('terms.html')">Terms</span>
+    </p>
+</footer>
+
+<script>
+// ====== Redirect ======
+function redirect(page){
+    window.location.href = page;
+}
+
+// ====== Dummy Products Data ======
+const products = [
+    {id:1,name:"Product A",price:499},
+    {id:2,name:"Product B",price:799},
+    {id:3,name:"Product C",price:299},
+    {id:4,name:"Product D",price:999},
+];
+
+// ====== Logged-in User ======
+const loggedInUser = localStorage.getItem("loggedInUser");
+if(!loggedInUser){
+    alert("Please login to checkout.");
+    redirect("index.html");
+}
+
+// ====== Load Cart ======
+function loadCart(){
+    const cart = JSON.parse(localStorage.getItem("cart") || "[]");
+    const container = document.getElementById("cartSummary");
+    container.innerHTML = "";
+    if(cart.length===0){
+        container.innerHTML="<p>Your cart is empty.</p>";
+        return;
+    }
+    let total = 0;
+    cart.forEach(item=>{
+        const product = products.find(p=>p.id===item.id);
+        const subTotal = product.price*item.quantity;
+        total += subTotal;
+        const p = document.createElement("p");
+        p.innerText = `${product.name} x${item.quantity} | ₹${subTotal}`;
+        container.appendChild(p);
+    });
+    const totalP = document.createElement("p");
+    totalP.innerHTML = `<strong>Total: ₹${total}</strong>`;
+    container.appendChild(totalP);
+}
+
+// ====== Place Order ======
+function placeOrder(){
+    const cart = JSON.parse(localStorage.getItem("cart") || "[]");
+    if(cart.length===0){
+        alert("Cart is empty!");
+        return;
+    }
+
+    let orders = JSON.parse(localStorage.getItem("orders") || "[]");
+    const newOrder = {
+        username: loggedInUser,
+        items: cart,
+        date: new Date().toLocaleString()
+    };
+    orders.push(newOrder);
+    localStorage.setItem("orders", JSON.stringify(orders));
+    localStorage.setItem("cart", JSON.stringify([])); // Clear cart
+    alert("Order placed successfully!");
+    redirect("orders.html"); // Go to orders page
+}
+
+// ====== Initialize ======
+loadCart();
+</script>
+
+</body>
+</html>
