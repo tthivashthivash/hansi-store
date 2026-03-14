@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cart - Mini Meesho</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Arial',sans-serif;}
+body{background:linear-gradient(120deg,#fef9f9,#e0f7fa);animation:bg 12s ease infinite;background-size:400% 400%;transition:0.5s;}
+header{display:flex;justify-content:space-between;align-items:center;padding:20px 40px;background:linear-gradient(135deg,violet,skyblue);color:white;flex-wrap:wrap;}
+header h1{font-size:1.8rem;}
+header button{padding:8px 15px;border:none;border-radius:8px;background:white;color:violet;font-weight:bold;cursor:pointer;transition:0.3s;}
+header button:hover{transform:scale(1.05);}
+main{max-width:800px;margin:20px auto;padding:20px;background:white;border-radius:15px;box-shadow:0 8px 20px rgba(0,0,0,0.15);}
+.cart-item{display:flex;align-items:center;margin-bottom:15px;padding:10px;border-bottom:1px solid #ddd;}
+.cart-item img{width:80px;height:80px;object-fit:cover;border-radius:10px;margin-right:15px;}
+.cart-item h3{flex:1;color:#333;}
+.cart-item .price{color:#ff4500;font-weight:bold;margin-right:10px;}
+.cart-item button{padding:5px 8px;border:none;border-radius:8px;background:linear-gradient(135deg,violet,skyblue);color:white;cursor:pointer;transition:0.3s;}
+.cart-item button:hover{transform:scale(1.05);}
+.total{text-align:right;margin-top:20px;font-size:1.2rem;font-weight:bold;}
+.checkout{margin-top:20px;padding:10px 15px;border:none;border-radius:10px;background:linear-gradient(135deg,violet,skyblue);color:white;font-weight:bold;cursor:pointer;transition:0.3s;}
+.checkout:hover{transform:scale(1.05);}
+@keyframes bg{0%{background-position:0% 50%;}50%{background-position:100% 50%;}100%{background-position:0% 50%;}}
+</style>
+</head>
+<body>
+<header>
+<h1>My Cart</h1>
+<button id="logout-btn">Logout</button>
+</header>
+
+<main id="cart-list">
+<p>Loading cart...</p>
+</main>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_PROJECT.firebaseapp.com",
+  projectId: "YOUR_PROJECT_ID",
+  storageBucket: "YOUR_PROJECT.appspot.com",
+  messagingSenderId: "XXXX",
+  appId: "XXXX"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+if(!localStorage.getItem("loggedIn")){
+    alert("Please login first!");
+    window.location.href="login.html";
+}
+
+const currentUser = JSON.parse(localStorage.getItem("currentUser"));
+let cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+const cartList = document.getElementById("cart-list");
+
+function renderCart(){
+    cartList.innerHTML="";
+    if(cart.length===0){
+        cartList.innerHTML="<p>Your cart is empty.</p>";
+        return;
+    }
+    let total=0;
+    cart.forEach((item,index)=>{
+        total+=parseInt(item.product.price.replace("₹",""));
+        const div=document.createElement("div");
+        div.className="cart-item";
+        div.innerHTML=`
+            <img src="${item.product.img}" alt="${item.product.name}">
+            <h3>${item.product.name}</h3>
+            <span class="price">${item.product.price}</span>
+            <button data-index="${index}">Remove</button>
+        `;
+        const btn = div.querySelector("button");
+        btn.addEventListener("click", ()=>{
+            cart.splice(index,1);
+            localStorage.setItem("cart", JSON.stringify(cart));
+            renderCart();
+        });
+        cartList.appendChild(div);
+    });
+    const totalDiv = document.createElement("div");
+    totalDiv.className="total";
+    totalDiv.innerHTML=`Total: ₹${total}`;
+    cartList.appendChild(totalDiv);
+
+    const checkoutBtn = document.createElement("button");
+    checkoutBtn.className="checkout";
+    checkoutBtn.innerText="Checkout / Place Order";
+    checkoutBtn.addEventListener("click", async ()=>{
+        try{
+            for(const item of cart){
+                await addDoc(collection(db,"orders"),{
+                    userEmail: currentUser.email,
+                    product:item.product,
+                    timestamp: new Date()
+                });
+            }
+            alert("Order placed successfully!");
+            cart=[];
+            localStorage.setItem("cart", JSON.stringify(cart));
+            renderCart();
+        }catch(e){
+            alert("Error placing order: "+e.message);
+        }
+    });
+    cartList.appendChild(checkoutBtn);
+}
+
+renderCart();
+
+document.getElementById("logout-btn").addEventListener("click", ()=>{
+    localStorage.removeItem("loggedIn");
+    localStorage.removeItem("currentUser");
+    window.location.href="login.html";
+});
+</script>
+</body>
+</html>
