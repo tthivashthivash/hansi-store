@@ -3,74 +3,41 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Product Details - Mini Meesho</title>
-<link rel="stylesheet" href="styles.css">
+<title>Product Details</title>
+<style>
+body { font-family:sans-serif; margin:0; padding:0; background:#f2f2f2; }
+header { background:linear-gradient(135deg,violet,skyblue); padding:10px; color:white; display:flex; justify-content:center; }
+header nav a { color:white; margin:0 10px; text-decoration:none; font-weight:bold; cursor:pointer; }
+header nav a:hover { text-decoration:underline; }
+main { padding:20px; text-align:center; }
+button { padding:8px 12px; background:linear-gradient(135deg,violet,skyblue); color:white; border:none; border-radius:5px; cursor:pointer; margin-top:10px; }
+</style>
 </head>
 <body>
 
 <header>
-<h1>Product Details</h1>
-<button id="back-btn">Back</button>
+  <nav>
+    <a onclick="goToPage('home')">Home</a>
+    <a onclick="goToPage('profile')">Profile</a>
+    <a onclick="goToPage('myorders')">My Orders</a>
+    <a onclick="goToPage('wishlist')">Wishlist</a>
+  </nav>
 </header>
 
-<main id="product-detail" style="padding:20px;">
-<!-- Product info will appear here -->
+<main>
+  <h2>Awesome Shirt</h2>
+  <img src="https://via.placeholder.com/300" style="display:block;margin:auto;">
+  <p>Price: ₹499</p>
+  <p>Description: High-quality shirt, very comfortable.</p>
+  <button onclick="alert('Order placed!')">Buy Now</button>
 </main>
 
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-
-const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_PROJECT.firebaseapp.com",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_PROJECT.appspot.com",
-  messagingSenderId: "XXXX",
-  appId: "XXXX"
-};
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-
-if(!localStorage.getItem('loggedIn')){
-  window.location.href='login.html';
+<script>
+function goToPage(page) {
+  alert("Redirecting to " + page + " page...");
+  // window.location.href = page + ".html";
 }
-
-const user = JSON.parse(localStorage.getItem('currentUser'));
-const product = JSON.parse(localStorage.getItem('selectedProduct'));
-const container = document.getElementById('product-detail');
-
-container.innerHTML=`
-  <img src="${product.img}" alt="${product.name}" style="width:100%;max-width:400px;margin-bottom:20px;">
-  <h2>${product.name}</h2>
-  <p>${product.details}</p>
-  <p style="font-weight:bold;color:#ff4500;">Price: ${product.price}</p>
-  <button id="add-cart">Add to Cart</button>
-  <button id="buy-now">Buy Now</button>
-`;
-
-document.getElementById('back-btn').addEventListener('click', ()=>{
-  window.location.href='home.html';
-});
-
-// Add to Cart (localStorage)
-document.getElementById('add-cart').addEventListener('click', ()=>{
-  let cart = JSON.parse(localStorage.getItem('cart')) || [];
-  cart.push(product);
-  localStorage.setItem('cart', JSON.stringify(cart));
-  alert('Added to Cart!');
-});
-
-// Buy Now → save order to Firebase
-document.getElementById('buy-now').addEventListener('click', async ()=>{
-  await addDoc(collection(db,"orders"),{
-    userEmail: user.email,
-    product: product,
-    timestamp: new Date()
-  });
-  alert('Order Placed!');
-  window.location.href='orders.html';
-});
 </script>
+
 </body>
 </html>
