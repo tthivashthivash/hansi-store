@@ -3,37 +3,39 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Profile - Mini Meesho</title>
-<link rel="stylesheet" href="styles.css">
+<title>Profile</title>
+<style>
+body { font-family:sans-serif; margin:0; padding:0; background:#f2f2f2; }
+header { background:linear-gradient(135deg,violet,skyblue); padding:10px; color:white; display:flex; justify-content:center; }
+header nav a { color:white; margin:0 10px; text-decoration:none; font-weight:bold; cursor:pointer; }
+header nav a:hover { text-decoration:underline; }
+main { padding:20px; text-align:center; }
+</style>
 </head>
 <body>
 
 <header>
-<h1>Profile</h1>
-<button id="logout-btn">Logout</button>
+  <nav>
+    <a onclick="goToPage('home')">Home</a>
+    <a onclick="goToPage('myorders')">My Orders</a>
+    <a onclick="goToPage('wishlist')">Wishlist</a>
+  </nav>
 </header>
 
-<main id="profile-info" style="padding:20px;">
-<!-- User info will appear here -->
+<main>
+  <h2>Your Profile</h2>
+  <p>Username: DemoUser</p>
+  <p>Email: demo@example.com</p>
 </main>
 
 <script>
-if(!localStorage.getItem('loggedIn')){
-  window.location.href='login.html';
+function goToPage(page) {
+  // Redirect simulation
+  alert("Redirecting to " + page + " page...");
+  // Replace alert with real navigation:
+  // window.location.href = page + ".html";
 }
-
-const user = JSON.parse(localStorage.getItem('currentUser'));
-const container = document.getElementById('profile-info');
-container.innerHTML=`
-  <h2>${user.username}</h2>
-  <p>Email: ${user.email}</p>
-`;
-
-document.getElementById('logout-btn').addEventListener('click',()=>{
-  localStorage.removeItem('loggedIn');
-  localStorage.removeItem('currentUser');
-  window.location.href='login.html';
-});
 </script>
+
 </body>
 </html>
