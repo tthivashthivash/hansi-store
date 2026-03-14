@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mini Meesho Wishlist</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Arial',sans-serif;}
+body{background:linear-gradient(120deg,#fef9f9,#e0f7fa);animation:bg 12s ease infinite;background-size:400% 400%;transition:0.5s;}
+header{display:flex;justify-content:space-between;align-items:center;padding:20px 40px;background:linear-gradient(135deg,violet,skyblue);color:white;flex-wrap:wrap;}
+header h1{font-size:1.8rem;}
+header button{padding:8px 15px;border:none;border-radius:8px;background:white;color:violet;font-weight:bold;cursor:pointer;transition:0.3s;}
+header button:hover{transform:scale(1.05);}
+main{max-width:800px;margin:20px auto;padding:20px;display:flex;flex-wrap:wrap;gap:20px;justify-content:center;}
+.wishlist-card{background:white;padding:10px;border-radius:12px;box-shadow:0 8px 20px rgba(0,0,0,0.15);width:200px;text-align:center;}
+.wishlist-card img{width:100%;height:150px;object-fit:cover;border-radius:8px;margin-bottom:10px;}
+.wishlist-card h3{color:#333;margin-bottom:5px;font-size:1rem;}
+.wishlist-card p{color:#666;font-size:0.9rem;margin-bottom:5px;}
+.wishlist-card button{padding:6px 12px;border:none;border-radius:8px;background:linear-gradient(135deg,violet,skyblue);color:white;cursor:pointer;font-weight:bold;transition:0.3s;}
+.wishlist-card button:hover{transform:scale(1.05);}
+@keyframes bg{0%{background-position:0% 50%;}50%{background-position:100% 50%;}100%{background-position:0% 50%;}}
+</style>
+</head>
+<body>
+<header>
+<h1>My Wishlist</h1>
+<button id="logout-btn">Logout</button>
+</header>
+
+<main id="wishlist-list">
+<p>Loading wishlist...</p>
+</main>
+
+<script>
+// Redirect if not logged in
+if(!localStorage.getItem("loggedIn")){
+    alert("Please login first!");
+    window.location.href="login.html";
+}
+
+const currentUser = JSON.parse(localStorage.getItem("currentUser"));
+const wishlistList = document.getElementById("wishlist-list");
+
+// Sample: Fetch wishlist from localStorage
+let allWishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
+
+function renderWishlist(){
+    wishlistList.innerHTML="";
+    const userWishlist = allWishlist.filter(item => item.userEmail === currentUser.email);
+    if(userWishlist.length===0){
+        wishlistList.innerHTML="<p>No items in wishlist.</p>";
+        return;
+    }
+    userWishlist.forEach((item,index)=>{
+        const card = document.createElement("div");
+        card.className="wishlist-card";
+        card.innerHTML=`
+            <img src="${item.product.img}" alt="${item.product.name}">
+            <h3>${item.product.name}</h3>
+            <p>Price: ${item.product.price}</p>
+            <button>Remove</button>
+        `;
+        card.querySelector("button").addEventListener("click", ()=>{
+            allWishlist = allWishlist.filter(i=>!(i.userEmail===currentUser.email && i.product.name===item.product.name));
+            localStorage.setItem("wishlist", JSON.stringify(allWishlist));
+            renderWishlist();
+        });
+        wishlistList.appendChild(card);
+    });
+}
+
+renderWishlist();
+
+// Logout
+document.getElementById("logout-btn").addEventListener("click", ()=>{
+    localStorage.removeItem("loggedIn");
+    localStorage.removeItem("currentUser");
+    window.location.href="login.html";
+});
+</script>
+</body>
+</html>
