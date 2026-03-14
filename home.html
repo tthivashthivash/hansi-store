@@ -5,76 +5,99 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>MiniMeesho Home</title>
 <style>
-/* ===== Embedded CSS ===== */
-body { font-family:sans-serif; margin:0; padding:0; background:#f2f2f2; }
-header { display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; padding:10px; background:linear-gradient(135deg,violet,skyblue); color:white; }
-header input { padding:5px; width:200px; border-radius:5px; border:none; }
-header button { padding:6px 10px; border:none; border-radius:5px; cursor:pointer; background:purple; color:white; }
-nav a { margin:0 10px; text-decoration:none; color:white; font-weight:bold; cursor:pointer; }
-nav a:hover { text-decoration:underline; }
-main { padding:20px; display:flex; flex-wrap:wrap; justify-content:center; gap:15px; }
-.product-card { background:white; width:180px; padding:10px; border-radius:10px; box-shadow:0 0 5px rgba(0,0,0,0.1); text-align:center; cursor:pointer; transition:0.3s; }
-.product-card:hover { transform:scale(1.05); box-shadow:0 0 10px rgba(0,0,0,0.2); }
-.product-card img { width:100%; border-radius:10px; }
-button.buy-btn { margin-top:10px; padding:5px 10px; background:linear-gradient(135deg, violet, skyblue); border:none; border-radius:5px; color:white; cursor:pointer; }
-section { margin-top:30px; width:100%; max-width:800px; margin-left:auto; margin-right:auto; }
-.section-title { text-align:center; margin-bottom:10px; font-size:1.2em; font-weight:bold; }
-.card-list { display:flex; flex-wrap:wrap; gap:10px; justify-content:center; }
-.card-list div { background:white; padding:10px; border-radius:10px; width:150px; text-align:center; cursor:pointer; box-shadow:0 0 5px rgba(0,0,0,0.1); }
-.card-list div:hover { transform:scale(1.05); box-shadow:0 0 10px rgba(0,0,0,0.2); }
+/* ====== General Styles ====== */
+body{
+    margin:0;
+    font-family: Arial, sans-serif;
+}
+header.navbar{
+    display:flex;
+    justify-content: space-between;
+    align-items:center;
+    padding:15px 30px;
+    background: linear-gradient(135deg, violet, skyblue);
+    color:white;
+}
+header .logo{
+    font-size: 24px;
+    font-weight: bold;
+    cursor: pointer;
+}
+header .nav-icons span{
+    margin-left:20px;
+    cursor: pointer;
+}
+header .search-bar{
+    padding:5px 10px;
+    border-radius:5px;
+    border:none;
+}
+main.home-main{
+    text-align:center;
+    margin-top:100px;
+}
+main.home-main button{
+    padding:10px 20px;
+    border:none;
+    border-radius:5px;
+    background: violet;
+    color:white;
+    cursor:pointer;
+    font-size:16px;
+}
+footer{
+    text-align:center;
+    padding:20px;
+    background:#f1f1f1;
+}
+footer span{
+    cursor:pointer;
+    color:blue;
+    text-decoration: underline;
+    margin:0 5px;
+}
+
+/* ====== Hover Effects ====== */
+header .nav-icons span:hover,
+footer span:hover,
+main.home-main button:hover{
+    opacity:0.8;
+}
 </style>
 </head>
 <body>
 
-<header>
-  <div>
-    <input type="text" id="searchBox" placeholder="Search products...">
-    <button onclick="searchProduct()">Search</button>
-  </div>
-  <nav>
-    <a href="profile.html">Profile</a>
-    <a href="myorders.html">My Orders</a>
-    <a href="wishlist.html">Wishlist</a>
-    <a href="home.html">Home</a>
-  </nav>
+<!-- Header / Navbar -->
+<header class="navbar">
+    <div class="logo" onclick="redirect('index.html')">MiniMeesho</div>
+    <input type="text" placeholder="Search products..." class="search-bar">
+    <div class="nav-icons">
+        <span onclick="redirect('wishlist.html')">❤️ Wishlist</span>
+        <span onclick="redirect('cart.html')">🛒 Cart</span>
+        <span onclick="redirect('profile.html')">👤 Profile</span>
+    </div>
 </header>
 
-<main>
-  <h2 style="width:100%; text-align:center;">Products</h2>
-  <div class="product-card" onclick="window.location.href='product.html'">
-    <img src="https://via.placeholder.com/150" alt="Shirt">
-    <p>Awesome Shirt</p>
-    <button class="buy-btn" onclick="window.location.href='product.html'">Buy Now</button>
-  </div>
-  <div class="product-card" onclick="window.location.href='product.html'">
-    <img src="https://via.placeholder.com/150" alt="Bag">
-    <p>Stylish Bag</p>
-    <button class="buy-btn" onclick="window.location.href='product.html'">Buy Now</button>
-  </div>
-  <div class="product-card" onclick="window.location.href='product.html'">
-    <img src="https://via.placeholder.com/150" alt="Shoes">
-    <p>Cool Shoes</p>
-    <button class="buy-btn" onclick="window.location.href='product.html'">Buy Now</button>
-  </div>
+<!-- Main Content -->
+<main class="home-main">
+    <h1>Welcome to MiniMeesho!</h1>
+    <p>Click below to explore our products</p>
+    <button onclick="redirect('products.html')">View Products</button>
 </main>
 
-<section>
-  <h3 class="section-title">Quick Access</h3>
-  <div class="card-list">
-    <div onclick="window.location.href='profile.html'">Your Profile</div>
-    <div onclick="window.location.href='myorders.html'">Orders</div>
-    <div onclick="window.location.href='wishlist.html'">Wishlist</div>
-  </div>
-</section>
+<!-- Footer -->
+<footer>
+    <p>MiniMeesho © 2026 | 
+        <span onclick="redirect('about.html')">About</span> | 
+        <span onclick="redirect('contact.html')">Contact</span> | 
+        <span onclick="redirect('terms.html')">Terms</span>
+    </p>
+</footer>
 
 <script>
-function searchProduct() {
-  const query = document.getElementById('searchBox').value.toLowerCase();
-  if(query.includes("shirt") || query.includes("bag") || query.includes("shoes")) {
-    window.location.href = "product.html";
-  } else {
-    alert("Product not found!");
-  }
+// ====== Redirect Function ======
+function redirect(page){
+    window.location.href = page;
 }
 </script>
 
