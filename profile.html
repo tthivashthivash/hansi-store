@@ -13,29 +13,17 @@ main { padding:20px; text-align:center; }
 </style>
 </head>
 <body>
-
 <header>
   <nav>
-    <a onclick="goToPage('home')">Home</a>
-    <a onclick="goToPage('myorders')">My Orders</a>
-    <a onclick="goToPage('wishlist')">Wishlist</a>
+    <a href="home.html">Home</a>
+    <a href="myorders.html">My Orders</a>
+    <a href="wishlist.html">Wishlist</a>
   </nav>
 </header>
-
 <main>
   <h2>Your Profile</h2>
   <p>Username: DemoUser</p>
   <p>Email: demo@example.com</p>
 </main>
-
-<script>
-function goToPage(page) {
-  // Redirect simulation
-  alert("Redirecting to " + page + " page...");
-  // Replace alert with real navigation:
-  // window.location.href = page + ".html";
-}
-</script>
-
 </body>
 </html>
